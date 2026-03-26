@@ -1,0 +1,12 @@
+{
+  "changelists": [
+    {
+      "name": "Default",
+      "files": [
+        "init_script.sh",
+        ".vscode/changelists.json"
+      ]
+    }
+  ],
+  "active": "Default"
+}

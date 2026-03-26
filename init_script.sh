@@ -48,26 +48,6 @@ for ext in "${VSCODE_EXTS[@]}"; do
     code --install-extension "$ext" --force
 done
 
-# Assicuriamoci che non ci siano processi di VS Code rimasti appesi in background
-killall code > /dev/null 2>&1
-sleep 2
-
-echo "⚙️ Configurazione del tema e delle icone in settings.json..."
-# Creiamo la cartella se non esiste
-mkdir -p ~/.config/Code/User
-
-# Se il file settings.json non esiste, creiamo un JSON vuoto per non far arrabbiare jq
-if [ ! -f ~/.config/Code/User/settings.json ]; then
-    echo "{}" > ~/.config/Code/User/settings.json
-fi
-
-# Usiamo jq per iniettare in modo sicuro e pulito i valori dentro il JSON
-tmp=$(mktemp)
-jq '. + {
-    "workbench.colorTheme": "Dracula",
-    "workbench.iconTheme": "material-icon-theme"
-}' ~/.config/Code/User/settings.json > "$tmp" && mv "$tmp" ~/.config/Code/User/settings.json
-
 echo "✅ VS Code configurato con successo!"
 
 # ==========================================
