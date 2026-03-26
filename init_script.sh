@@ -28,35 +28,26 @@ flatpak install -y flathub \
     com.mattjakeman.ExtensionManager
 
 # ==========================================
-# 4. INSTALLAZIONE VISUAL STUDIO CODE E ESTENSIONI
+# 4. INSTALLAZIONE ZED EDITOR
 # ==========================================
-echo "🧑‍💻 Aggiunta repository e installazione di Visual Studio Code..."
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo zypper addrepo -f https://packages.microsoft.com/yumrepos/vscode vscode
-sudo zypper refresh
-sudo zypper in -y code
-
-echo "🧩 Installazione estensioni di VS Code..."
-VSCODE_EXTS=(
-    "dracula-theme.theme-dracula"          # Dracula Theme Official
-    "github.copilot"                       # GitHub Copilot (Requisito per Chat)
-    "github.copilot-chat"                  # GitHub Copilot Chat
-    "kito94.intellij-idea-keybindings"     # IntelliJ IDEA Keybindings
-    "PKief.material-icon-theme"            # Material Icon Theme
-    "streetsidesoftware.code-spell-checker" # Code Spell Checker
-    "christian-kohler.path-intellisense"   # Path Intellisense
-)
-
-# Installazione delle estensioni
-for ext in "${VSCODE_EXTS[@]}"; do
-    echo "   -> Installo estensione: $ext"
-    code --install-extension "$ext" --force
-done
-
-echo "✅ VS Code configurato con successo!"
+echo "🧑‍💻 Installazione di Zed Editor..."
+# Lo script di Zed installerà l'eseguibile in ~/.local/bin/zed
+curl -f https://zed.dev/install.sh | sh
 
 # ==========================================
-# 5. CODECS E TWEAKS DI GNOME
+# 5. INSTALLAZIONE DOCKER E DOCKER COMPOSE
+# ==========================================
+echo "🐳 Installazione di Docker seguendo la guida per openSUSE..."
+sudo zypper in -y docker docker-compose
+
+echo "   -> Abilitazione e avvio del servizio Docker in background..."
+sudo systemctl enable --now docker
+
+echo "   -> Aggiunta dell'utente al gruppo docker (per evitare l'uso di sudo)..."
+sudo usermod -aG docker $USER
+
+# ==========================================
+# 6. CODECS E TWEAKS DI GNOME
 # ==========================================
 echo "🎵 Installazione Codecs multimediali..."
 opi codecs # (Premi Y se richiesto durante l'esecuzione)
@@ -65,7 +56,7 @@ echo "🖥️ Abilitazione ridimensionamento frazionario per Wayland..."
 gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
 
 # ==========================================
-# 6. DOWNLOAD E SETUP TEMA DRACULA (GTK3 & GTK4)
+# 7. DOWNLOAD E SETUP TEMA DRACULA (GTK3 & GTK4)
 # ==========================================
 echo "🧛‍♂️ Installazione Tema GTK e Icone Dracula..."
 mkdir -p ~/.themes ~/.icons ~/.config/gtk-4.0
@@ -98,7 +89,7 @@ ln -sf ~/.themes/Dracula/assets ~/.config/assets
 rm /tmp/dracula-theme.zip /tmp/dracula-icons.zip
 
 # ==========================================
-# 7. DOWNLOAD E SETUP ESTENSIONI GNOME
+# 8. DOWNLOAD E SETUP ESTENSIONI GNOME
 # ==========================================
 echo "🧩 Inizio configurazione estensioni GNOME..."
 gsettings set org.gnome.shell disable-user-extensions false
@@ -140,7 +131,7 @@ if [ -n "$EXT_LIST" ]; then
 fi
 
 # ==========================================
-# 8. SETUP OH MY ZSH E PLUGIN
+# 9. SETUP OH MY ZSH E PLUGIN
 # ==========================================
 echo "🐚 Installazione e configurazione di Oh My Zsh..."
 rm -rf ~/.oh-my-zsh
@@ -153,7 +144,14 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}
 git clone https://github.com/MichaelAquilina/zsh-you-should-use.git ${ZSH_CUSTOM}/plugins/you-should-use
 
 sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting you-should-use)/' ~/.zshrc
+
+echo "   -> Aggiunta alias utili al file .zshrc..."
+echo "alias c='zed'" >> ~/.zshrc
+echo "alias d='docker'" >> ~/.zshrc
+echo "alias dc='docker-compose'" >> ~/.zshrc
+
+echo "   -> Impostazione di Zsh come shell predefinita..."
 sudo usermod -s $(which zsh) $USER
 
 echo "=========================================="
-echo "🎉 SETUP COMPLETATO! Riavvia il computer per applicare tutte le modifiche grafiche e di shell."
+echo "🎉 SETUP COMPLETATO! Riavvia il computer per applicare tutte le modifiche grafiche, Docker e la nuova shell."

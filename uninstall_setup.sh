@@ -16,7 +16,7 @@ else
 fi
 
 # ==========================================
-# 2. RIMOZIONE APP FLATPAK
+# 2. RIMOZIONE APP FLATPAK E DOCKER
 # ==========================================
 echo "🛍️ Disinstallazione delle applicazioni Flatpak..."
 flatpak uninstall -y \
@@ -26,17 +26,19 @@ flatpak uninstall -y \
     it.mijorus.gearlever \
     com.google.Chrome \
     com.mattjakeman.ExtensionManager
-
 flatpak uninstall --unused -y
 
+echo "🐳 Disinstallazione di Docker e spegnimento del servizio..."
+sudo systemctl disable --now docker
+sudo zypper remove -y docker docker-compose
+
 # ==========================================
-# 3. RIMOZIONE VISUAL STUDIO CODE E REPO
+# 3. RIMOZIONE ZED EDITOR
 # ==========================================
-echo "🧑‍💻 Disinstallazione di VS Code..."
-sudo zypper remove -y code
-rm -rf ~/.vscode ~/.config/Code
-# Rimuove la repository di microsoft (opzionale ma consigliato per una pulizia profonda)
-sudo zypper removerepo vscode
+echo "🧑‍💻 Disinstallazione di Zed Editor..."
+rm -f ~/.local/bin/zed
+rm -rf ~/.config/zed
+rm -rf ~/.local/share/zed
 
 # ==========================================
 # 4. RIMOZIONE TEMI DRACULA E RIPRISTINO GNOME
@@ -45,7 +47,6 @@ echo "🧛‍♂️ Rimozione temi Dracula e file di configurazione GTK4..."
 rm -rf ~/.themes/Dracula
 rm -rf ~/.icons/Dracula
 
-# Rimozione symlink libadwaita
 rm -f ~/.config/gtk-4.0/gtk.css
 rm -f ~/.config/gtk-4.0/gtk-dark.css
 rm -f ~/.config/gtk-4.0/assets
