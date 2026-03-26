@@ -38,16 +38,13 @@ sudo zypper in -y code
 
 echo "🧩 Installazione estensioni di VS Code..."
 VSCODE_EXTS=(
-    "jamiewhitlam.changelists"             # Changelists
     "dracula-theme.theme-dracula"          # Dracula Theme Official
-    "waderyan.gitblame"                    # Git Blame
-    "mhutchie.git-graph"                   # Git Graph
-    "donjayamanne.githistory"              # Git History
-    "arturock.gitstash"                    # Git Stash
     "github.copilot"                       # GitHub Copilot (Requisito per Chat)
     "github.copilot-chat"                  # GitHub Copilot Chat
     "kito94.intellij-idea-keybindings"     # IntelliJ IDEA Keybindings
     "PKief.material-icon-theme"            # Material Icon Theme
+    "streetsidesoftware.code-spell-checker" # Code Spell Checker
+    "christian-kohler.path-intellisense"   # Path Intellisense
 )
 
 # Installazione delle estensioni
