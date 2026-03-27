@@ -28,7 +28,7 @@ flatpak install -y flathub \
     com.mattjakeman.ExtensionManager
 
 # ==========================================
-# 4. INSTALLAZIONE VISUAL STUDIO CODE E ESTENSIONI GIT (Senza GitLens)
+# 4. INSTALLAZIONE VS CODE E ESTENSIONI (Stile IntelliJ, NO GitLens)
 # ==========================================
 echo "🧑‍💻 Aggiunta repository e installazione di Visual Studio Code..."
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -40,7 +40,6 @@ echo "⚙️ Preparazione delle impostazioni di VS Code IN ANTICIPO..."
 killall code > /dev/null 2>&1
 
 mkdir -p ~/.config/Code/User
-# JSON configurato per massimizzare l'esperienza Git stile IntelliJ
 cat <<EOF > ~/.config/Code/User/settings.json
 {
     "workbench.colorTheme": "Dracula",
@@ -66,13 +65,12 @@ VSCODE_EXTS=(
     "ms-azuretools.vscode-docker"
     "ms-vscode-remote.remote-containers"
     "alefragnani.project-manager"
-    # --- IL PACCHETTO GIT STILE INTELLIJ ---
-    "waderyan.gitblame"                    # Sostituto leggero e pulito di GitLens
-    "mhutchie.git-graph"                   # L'albero dei commit colorato (come il tab 'Log')
-    "donjayamanne.githistory"              # Per la cronologia del singolo file
-    "letmaik.git-tree-compare"             # Per confrontare i branch ad albero
-    "jamiewhitlam.changelists"             # FONDAMENTALE: Ricrea le Changelist di JetBrains
-    "arturock.gitstash"                    # Gestione avanzata degli Stash
+    "waderyan.gitblame"
+    "mhutchie.git-graph"
+    "donjayamanne.githistory"
+    "letmaik.git-tree-compare"
+    "jamiewhitlam.changelists"
+    "arturock.gitstash"
 )
 
 for ext in "${VSCODE_EXTS[@]}"; do
@@ -80,7 +78,6 @@ for ext in "${VSCODE_EXTS[@]}"; do
     code --install-extension "$ext" --force
 done
 
-# Chiudiamo per assicurarci che non ci siano processi appesi
 killall code > /dev/null 2>&1
 
 # ==========================================
@@ -201,6 +198,21 @@ echo "alias dc='docker-compose'" >> ~/.zshrc
 
 echo "   -> Impostazione di Zsh come shell predefinita..."
 sudo usermod -s $(which zsh) $USER
+
+# ==========================================
+# 10. INSTALLAZIONE NVM E NODE.JS LTS
+# ==========================================
+echo "🟢 Installazione di NVM e Node.js (Ultima LTS)..."
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+
+# Carica NVM nell'ambiente corrente per poter lanciare subito il comando 'nvm install'
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+echo "   -> Installazione della versione LTS di Node.js..."
+nvm install --lts
+nvm use --lts
+nvm alias default 'lts/*'
 
 echo "=========================================="
 echo "🎉 SETUP COMPLETATO! Riavvia il computer per applicare tutte le modifiche grafiche, Docker e la nuova shell."

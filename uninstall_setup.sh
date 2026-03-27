@@ -16,7 +16,13 @@ else
 fi
 
 # ==========================================
-# 2. RIMOZIONE APP FLATPAK E DOCKER
+# 2. RIMOZIONE NVM E NODE.JS
+# ==========================================
+echo "🟢 Disinstallazione di NVM e di tutte le versioni di Node.js..."
+rm -rf ~/.nvm
+
+# ==========================================
+# 3. RIMOZIONE APP FLATPAK E DOCKER
 # ==========================================
 echo "🛍️ Disinstallazione delle applicazioni Flatpak..."
 flatpak uninstall -y \
@@ -33,7 +39,7 @@ sudo systemctl disable --now docker
 sudo zypper remove -y docker docker-compose
 
 # ==========================================
-# 3. RIMOZIONE VISUAL STUDIO CODE E REPO
+# 4. RIMOZIONE VISUAL STUDIO CODE E REPO
 # ==========================================
 echo "🧑‍💻 Disinstallazione di VS Code..."
 sudo zypper remove -y code
@@ -41,7 +47,7 @@ rm -rf ~/.vscode ~/.config/Code
 sudo zypper removerepo vscode
 
 # ==========================================
-# 4. RIMOZIONE TEMI DRACULA E RIPRISTINO GNOME
+# 5. RIMOZIONE TEMI DRACULA E RIPRISTINO GNOME
 # ==========================================
 echo "🧛‍♂️ Rimozione temi Dracula e file di configurazione GTK4..."
 rm -rf ~/.themes/Dracula
@@ -53,23 +59,4 @@ rm -f ~/.config/gtk-4.0/assets
 rm -f ~/.config/assets
 
 echo "🖥️ Ripristino impostazioni di default di GNOME..."
-gsettings reset org.gnome.mutter experimental-features
-gsettings reset org.gnome.desktop.interface color-scheme
-gsettings reset org.gnome.desktop.interface gtk-theme
-gsettings reset org.gnome.desktop.wm.preferences theme
-gsettings reset org.gnome.desktop.interface icon-theme
-gsettings reset org.gnome.desktop.interface accent-color
-
-# ==========================================
-# 5. RIMOZIONE ESTENSIONI
-# ==========================================
-echo "🧩 Rimozione estensioni GNOME..."
-rm -rf ~/.local/share/gnome-shell/extensions/*
-
-echo "⚙️ Azzeramento del registro delle estensioni..."
-gsettings reset org.gnome.shell enabled-extensions
-gsettings reset org.gnome.shell disable-user-extensions
-dconf reset /org/gnome/shell/extensions/user-theme/name
-
-echo "=========================================="
-echo "✅ RIPRISTINO COMPLETATO! Riavvia il computer per tornare al look e alla shell predefiniti."
+gsettings reset org.gnome.mutter experimental-
