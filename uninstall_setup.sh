@@ -33,12 +33,12 @@ sudo systemctl disable --now docker
 sudo zypper remove -y docker docker-compose
 
 # ==========================================
-# 3. RIMOZIONE ZED EDITOR
+# 3. RIMOZIONE VISUAL STUDIO CODE E REPO
 # ==========================================
-echo "🧑‍💻 Disinstallazione di Zed Editor..."
-rm -f ~/.local/bin/zed
-rm -rf ~/.config/zed
-rm -rf ~/.local/share/zed
+echo "🧑‍💻 Disinstallazione di VS Code..."
+sudo zypper remove -y code
+rm -rf ~/.vscode ~/.config/Code
+sudo zypper removerepo vscode
 
 # ==========================================
 # 4. RIMOZIONE TEMI DRACULA E RIPRISTINO GNOME

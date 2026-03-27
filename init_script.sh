@@ -28,11 +28,49 @@ flatpak install -y flathub \
     com.mattjakeman.ExtensionManager
 
 # ==========================================
-# 4. INSTALLAZIONE ZED EDITOR
+# 4. INSTALLAZIONE VISUAL STUDIO CODE E ESTENSIONI
 # ==========================================
-echo "🧑‍💻 Installazione di Zed Editor..."
-# Lo script di Zed installerà l'eseguibile in ~/.local/bin/zed
-curl -f https://zed.dev/install.sh | sh
+echo "🧑‍💻 Aggiunta repository e installazione di Visual Studio Code..."
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo zypper addrepo -f https://packages.microsoft.com/yumrepos/vscode vscode
+sudo zypper refresh
+sudo zypper in -y code
+
+echo "⚙️ Preparazione delle impostazioni di VS Code IN ANTICIPO..."
+killall code > /dev/null 2>&1
+
+mkdir -p ~/.config/Code/User
+# JSON pulito: solo Tema, Icone e blocco della telemetria Microsoft
+cat <<EOF > ~/.config/Code/User/settings.json
+{
+    "workbench.colorTheme": "Dracula",
+    "workbench.iconTheme": "material-icon-theme",
+    "telemetry.telemetryLevel": "off"
+}
+EOF
+
+echo "🧩 Installazione estensioni di VS Code..."
+VSCODE_EXTS=(
+    "dracula-theme.theme-dracula"
+    "PKief.material-icon-theme"
+    "christian-kohler.path-intellisense"
+    "streetsidesoftware.code-spell-checker"
+    "formulahendry.auto-rename-tag"
+    "usernamehw.errorlens"
+    "eamodio.gitlens"
+    "mhutchie.git-graph"
+    "donjayamanne.githistory"
+    "kito94.intellij-idea-keybindings"
+    "letmaik.git-tree-compare"
+)
+
+for ext in "${VSCODE_EXTS[@]}"; do
+    echo "   -> Installo estensione: $ext"
+    code --install-extension "$ext" --force
+done
+
+# Chiudiamo per assicurarci che non ci siano processi appesi
+killall code > /dev/null 2>&1
 
 # ==========================================
 # 5. INSTALLAZIONE DOCKER E DOCKER COMPOSE
@@ -146,7 +184,7 @@ git clone https://github.com/MichaelAquilina/zsh-you-should-use.git ${ZSH_CUSTOM
 sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting you-should-use)/' ~/.zshrc
 
 echo "   -> Aggiunta alias utili al file .zshrc..."
-echo "alias c='zed'" >> ~/.zshrc
+echo "alias c='code'" >> ~/.zshrc
 echo "alias d='docker'" >> ~/.zshrc
 echo "alias dc='docker-compose'" >> ~/.zshrc
 
