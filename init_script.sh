@@ -28,7 +28,7 @@ flatpak install -y flathub \
     com.mattjakeman.ExtensionManager
 
 # ==========================================
-# 4. INSTALLAZIONE VISUAL STUDIO CODE E ESTENSIONI
+# 4. INSTALLAZIONE VISUAL STUDIO CODE E ESTENSIONI GIT (Senza GitLens)
 # ==========================================
 echo "🧑‍💻 Aggiunta repository e installazione di Visual Studio Code..."
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -40,12 +40,17 @@ echo "⚙️ Preparazione delle impostazioni di VS Code IN ANTICIPO..."
 killall code > /dev/null 2>&1
 
 mkdir -p ~/.config/Code/User
-# JSON pulito: solo Tema, Icone e blocco della telemetria Microsoft
+# JSON configurato per massimizzare l'esperienza Git stile IntelliJ
 cat <<EOF > ~/.config/Code/User/settings.json
 {
     "workbench.colorTheme": "Dracula",
     "workbench.iconTheme": "material-icon-theme",
-    "telemetry.telemetryLevel": "off"
+    "telemetry.telemetryLevel": "off",
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "changelists.autoAdd": true,
+    "gitblame.inlineMessageEnabled": true
 }
 EOF
 
@@ -57,11 +62,17 @@ VSCODE_EXTS=(
     "streetsidesoftware.code-spell-checker"
     "formulahendry.auto-rename-tag"
     "usernamehw.errorlens"
-    "eamodio.gitlens"
-    "mhutchie.git-graph"
-    "donjayamanne.githistory"
     "kito94.intellij-idea-keybindings"
-    "letmaik.git-tree-compare"
+    "ms-azuretools.vscode-docker"
+    "ms-vscode-remote.remote-containers"
+    "alefragnani.project-manager"
+    # --- IL PACCHETTO GIT STILE INTELLIJ ---
+    "waderyan.gitblame"                    # Sostituto leggero e pulito di GitLens
+    "mhutchie.git-graph"                   # L'albero dei commit colorato (come il tab 'Log')
+    "donjayamanne.githistory"              # Per la cronologia del singolo file
+    "letmaik.git-tree-compare"             # Per confrontare i branch ad albero
+    "jamiewhitlam.changelists"             # FONDAMENTALE: Ricrea le Changelist di JetBrains
+    "arturock.gitstash"                    # Gestione avanzata degli Stash
 )
 
 for ext in "${VSCODE_EXTS[@]}"; do
