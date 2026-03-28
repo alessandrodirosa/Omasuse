@@ -69,8 +69,6 @@ VSCODE_EXTS=(
     "mhutchie.git-graph"
     "donjayamanne.githistory"
     "letmaik.git-tree-compare"
-    "jamiewhitlam.changelists"
-    "arturock.gitstash"
 )
 
 for ext in "${VSCODE_EXTS[@]}"; do
