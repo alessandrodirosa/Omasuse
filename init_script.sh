@@ -7,10 +7,10 @@ echo "🔄 Avvio aggiornamento sistema..."
 sudo zypper dup -y
 
 # ==========================================
-# 2. INSTALLAZIONE PACCHETTI BASE
+# 2. INSTALLAZIONE PACCHETTI BASE (incluso GitHub CLI)
 # ==========================================
 echo "📦 Installazione pacchetti da repository ufficiale..."
-sudo zypper in -y flatpak zsh fastfetch htop opi curl jq git unzip dconf
+sudo zypper in -y flatpak zsh fastfetch htop opi curl jq git unzip dconf gh
 
 # ==========================================
 # 3. CONFIGURAZIONE FLATPAK E APP
@@ -32,7 +32,7 @@ flatpak install -y flathub \
 echo ""
 echo "🧑‍💻 QUALE EDITOR VUOI INSTALLARE?"
 echo "  1) Visual Studio Code (Configurato stile IntelliJ)"
-echo "  2) Zed (L'editor iper-veloce scritto in Rust)"
+echo "  2) Zed (L'editor iper-veloce in Rust)"
 echo "  3) Entrambi"
 read -p "Scelta (1/2/3): " EDITOR_CHOICE
 echo ""
@@ -87,14 +87,13 @@ EOF
 fi
 
 if [[ "$EDITOR_CHOICE" == "2" || "$EDITOR_CHOICE" == "3" ]]; then
-    echo "⚡ Installazione di Zed (via script ufficiale)..."
+    echo "⚡ Installazione di Zed (Versione Stabile)..."
     curl -f https://zed.dev/install.sh | sh
 
-    echo "⚙️ Configurazione tema Dracula e telemetria per Zed..."
+    echo "⚙️ Configurazione telemetria e font per Zed..."
     mkdir -p ~/.config/zed
     cat <<EOF > ~/.config/zed/settings.json
 {
-  "theme": "Dracula",
   "telemetry": {
     "metrics": false
   },
@@ -212,11 +211,22 @@ sudo usermod -s $(which zsh) $USER
 # ==========================================
 echo "🟢 Installazione di NVM e Node.js (Ultima LTS)..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
+
+# Aggiungo la configurazione standard di NVM in fondo al .zshrc
+cat << 'EOF' >> ~/.zshrc
+
+# Configurazione NVM
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+EOF
+
+# Carico NVM nell'ambiente corrente per poter installare Node ora
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 nvm install --lts
 nvm use --lts
 nvm alias default 'lts/*'
 
 echo "=========================================="
-echo "🎉 SETUP COMPLETATO! Riavvia per applicare Zsh, Docker e le estensioni GNOME."
+echo "🎉 SETUP COMPLETATO! Riavvia il computer per applicare Zsh, NVM, Docker e le estensioni."
