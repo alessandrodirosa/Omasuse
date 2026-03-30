@@ -1,11 +1,12 @@
 #!/bin/bash
 
-echo "🧹 INIZIO PULIZIA E RIPRISTINO DEL SISTEMA..."
+echo "🧹 STARTING SYSTEM CLEANUP AND RESTORE..."
+echo ""
 
 # ==========================================
-# 1. RIPRISTINO SHELL E RIMOZIONE OH MY ZSH
+# 1. SHELL RESTORE & OH MY ZSH REMOVAL
 # ==========================================
-echo "🐚 Ripristino della shell predefinita a Bash e rimozione Oh My Zsh..."
+echo "🐚 Restoring default shell to Bash and removing Oh My Zsh..."
 sudo usermod -s $(which bash) $USER
 rm -rf ~/.oh-my-zsh
 if [ -f ~/.zshrc.pre-oh-my-zsh ]; then
@@ -13,60 +14,60 @@ if [ -f ~/.zshrc.pre-oh-my-zsh ]; then
 else
     rm -f ~/.zshrc
 fi
+echo ""
 
 # ==========================================
-# 2. RIMOZIONE NVM E NODE.JS
+# 2. NVM & NODE.JS REMOVAL
 # ==========================================
-echo "🟢 Disinstallazione di NVM e Node.js..."
+echo "🟢 Uninstalling NVM and Node.js..."
 rm -rf ~/.nvm
+echo ""
 
 # ==========================================
-# 3. RIMOZIONE APP FLATPAK E DOCKER
+# 3. FLATPAK APPS & DOCKER REMOVAL
 # ==========================================
-echo "🛍️ Disinstallazione Flatpak e Docker..."
+echo "🛍️ Uninstalling Flatpak applications and Docker..."
 flatpak uninstall -y com.github.tchx84.Flatseal io.github.flattool.Warehouse org.onlyoffice.desktopeditors it.mijorus.gearlever com.google.Chrome com.mattjakeman.ExtensionManager
 flatpak uninstall --unused -y
 sudo systemctl disable --now docker
 sudo zypper remove -y docker docker-compose
+echo ""
 
 # ==========================================
-# 4. RIMOZIONE EDITOR (VS CODE E ZED)
+# 4. VISUAL STUDIO CODE REMOVAL
 # ==========================================
-echo "🧑‍💻 Disinstallazione di Visual Studio Code..."
+echo "🧑‍💻 Uninstalling Visual Studio Code..."
 sudo zypper remove -y code
 rm -rf ~/.vscode ~/.config/Code
 sudo zypper removerepo vscode
-
-echo "⚡ Disinstallazione di Zed..."
-rm -rf ~/.local/bin/zed
-rm -rf ~/.local/libexec/zed
-rm -rf ~/.config/zed
-rm -rf ~/.local/share/zed
-rm -f ~/.local/share/applications/dev.zed.Zed.desktop
+echo ""
 
 # ==========================================
-# 5. RIMOZIONE TEMI DRACULA E RIPRISTINO GNOME
+# 5. DRACULA THEMES REMOVAL & GNOME RESTORE
 # ==========================================
-echo "🧛‍♂️ Rimozione temi Dracula e configurazione GTK4..."
+echo "🧛‍♂️ Removing Dracula themes and GTK4 configuration..."
 rm -rf ~/.themes/Dracula ~/.icons/Dracula
 rm -f ~/.config/gtk-4.0/gtk.css ~/.config/gtk-4.0/gtk-dark.css ~/.config/gtk-4.0/assets ~/.config/assets
 
-echo "🖥️ Ripristino impostazioni predefinite di GNOME..."
+echo "🖥️ Restoring GNOME default settings..."
 gsettings reset org.gnome.mutter experimental-features
 gsettings reset org.gnome.desktop.interface color-scheme
 gsettings reset org.gnome.desktop.interface gtk-theme
 gsettings reset org.gnome.desktop.wm.preferences theme
 gsettings reset org.gnome.desktop.interface icon-theme
 gsettings reset org.gnome.desktop.interface accent-color
+echo ""
 
 # ==========================================
-# 6. RIMOZIONE ESTENSIONI GNOME
+# 6. GNOME EXTENSIONS REMOVAL
 # ==========================================
-echo "🧩 Rimozione estensioni GNOME..."
+echo "🧩 Removing GNOME extensions..."
 rm -rf ~/.local/share/gnome-shell/extensions/*
 gsettings reset org.gnome.shell enabled-extensions
 gsettings reset org.gnome.shell disable-user-extensions
 dconf reset /org/gnome/shell/extensions/user-theme/name
+echo ""
 
 echo "=========================================="
-echo "✅ RIPRISTINO COMPLETATO! Riavvia il computer."
+echo "✅ RESTORE COMPLETE! Restart your computer."
+echo "=========================================="

@@ -43,26 +43,18 @@ flatpak install -y flathub \
 echo ""
 
 # ==========================================
-# 4. EDITOR SELECTION & INSTALLATION
+# 4. VISUAL STUDIO CODE INSTALLATION
 # ==========================================
-echo "🧑‍💻 WHICH EDITOR DO YOU WANT TO INSTALL?"
-echo "  1) Visual Studio Code (IntelliJ style configuration)"
-echo "  2) Zed (The hyper-fast Rust editor)"
-echo "  3) Both"
-read -p "Choice (1/2/3): " EDITOR_CHOICE
-echo ""
+echo "🧑‍💻 Adding repository and installing Visual Studio Code..."
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo zypper addrepo -f https://packages.microsoft.com/yumrepos/vscode vscode
+sudo zypper refresh
+sudo zypper in -y code
 
-if [[ "$EDITOR_CHOICE" == "1" || "$EDITOR_CHOICE" == "3" ]]; then
-    echo "🧑‍💻 Adding repository and installing Visual Studio Code..."
-    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-    sudo zypper addrepo -f https://packages.microsoft.com/yumrepos/vscode vscode
-    sudo zypper refresh
-    sudo zypper in -y code
-
-    echo "⚙️ Preparing VS Code settings IN ADVANCE..."
-    killall code > /dev/null 2>&1
-    mkdir -p ~/.config/Code/User
-    cat <<EOF > ~/.config/Code/User/settings.json
+echo "⚙️ Preparing VS Code settings IN ADVANCE..."
+killall code > /dev/null 2>&1
+mkdir -p ~/.config/Code/User
+cat <<EOF > ~/.config/Code/User/settings.json
 {
     "workbench.colorTheme": "Dracula",
     "workbench.iconTheme": "material-icon-theme",
@@ -75,38 +67,31 @@ if [[ "$EDITOR_CHOICE" == "1" || "$EDITOR_CHOICE" == "3" ]]; then
 }
 EOF
 
-    echo "🧩 Installing VS Code extensions..."
-    VSCODE_EXTS=(
-        "dracula-theme.theme-dracula"
-        "PKief.material-icon-theme"
-        "christian-kohler.path-intellisense"
-        "streetsidesoftware.code-spell-checker"
-        "formulahendry.auto-rename-tag"
-        "usernamehw.errorlens"
-        "kito94.intellij-idea-keybindings"
-        "ms-azuretools.vscode-docker"
-        "ms-vscode-remote.remote-containers"
-        "alefragnani.project-manager"
-        "waderyan.gitblame"
-        "mhutchie.git-graph"
-        "donjayamanne.githistory"
-        "letmaik.git-tree-compare"
-        "jamiewhitlam.changelists"
-        "arturock.gitstash"
-    )
-    for ext in "${VSCODE_EXTS[@]}"; do
-        echo "   -> Installing extension: $ext"
-        code --install-extension "$ext" --force
-    done
-    killall code > /dev/null 2>&1
-    echo ""
-fi
-
-if [[ "$EDITOR_CHOICE" == "2" || "$EDITOR_CHOICE" == "3" ]]; then
-    echo "⚡ Installing Zed (Stable Version)..."
-    curl -f https://zed.dev/install.sh | sh
-    echo ""
-fi
+echo "🧩 Installing VS Code extensions..."
+VSCODE_EXTS=(
+    "dracula-theme.theme-dracula"
+    "PKief.material-icon-theme"
+    "christian-kohler.path-intellisense"
+    "streetsidesoftware.code-spell-checker"
+    "formulahendry.auto-rename-tag"
+    "usernamehw.errorlens"
+    "kito94.intellij-idea-keybindings"
+    "ms-azuretools.vscode-docker"
+    "ms-vscode-remote.remote-containers"
+    "alefragnani.project-manager"
+    "waderyan.gitblame"
+    "mhutchie.git-graph"
+    "donjayamanne.githistory"
+    "letmaik.git-tree-compare"
+    "jamiewhitlam.changelists"
+    "arturock.gitstash"
+)
+for ext in "${VSCODE_EXTS[@]}"; do
+    echo "   -> Installing extension: $ext"
+    code --install-extension "$ext" --force
+done
+killall code > /dev/null 2>&1
+echo ""
 
 # ==========================================
 # 5. DOCKER & DOCKER COMPOSE INSTALLATION
@@ -209,7 +194,6 @@ git clone https://github.com/MichaelAquilina/zsh-you-should-use.git ${ZSH_CUSTOM
 sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting you-should-use)/' ~/.zshrc
 
 echo "alias c='code'" >> ~/.zshrc
-echo "alias z='zed'" >> ~/.zshrc
 echo "alias d='docker'" >> ~/.zshrc
 echo "alias dc='docker-compose'" >> ~/.zshrc
 
