@@ -105,18 +105,6 @@ fi
 if [[ "$EDITOR_CHOICE" == "2" || "$EDITOR_CHOICE" == "3" ]]; then
     echo "⚡ Installing Zed (Stable Version)..."
     curl -f https://zed.dev/install.sh | sh
-
-    echo "⚙️ Configuring telemetry and fonts for Zed..."
-    mkdir -p ~/.config/zed
-    cat <<EOF > ~/.config/zed/settings.json
-{
-  "telemetry": {
-    "metrics": false
-  },
-  "ui_font_size": 16,
-  "buffer_font_size": 15
-}
-EOF
     echo ""
 fi
 
