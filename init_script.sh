@@ -51,22 +51,6 @@ sudo zypper addrepo -f https://packages.microsoft.com/yumrepos/vscode vscode
 sudo zypper refresh
 sudo zypper in -y code
 
-echo "⚙️ Preparing VS Code settings IN ADVANCE..."
-killall code > /dev/null 2>&1
-mkdir -p ~/.config/Code/User
-cat <<EOF > ~/.config/Code/User/settings.json
-{
-    "workbench.colorTheme": "Dracula",
-    "workbench.iconTheme": "material-icon-theme",
-    "telemetry.telemetryLevel": "off",
-    "git.enableSmartCommit": true,
-    "git.autofetch": true,
-    "git.confirmSync": false,
-    "changelists.autoAdd": true,
-    "gitblame.inlineMessageEnabled": true
-}
-EOF
-
 echo "🧩 Installing VS Code extensions..."
 VSCODE_EXTS=(
     "dracula-theme.theme-dracula"
@@ -86,11 +70,11 @@ VSCODE_EXTS=(
     "jamiewhitlam.changelists"
     "arturock.gitstash"
 )
+
 for ext in "${VSCODE_EXTS[@]}"; do
-    echo "   -> Installing extension: $ext"
+    echo "   -> Installing: $ext"
     code --install-extension "$ext" --force
 done
-killall code > /dev/null 2>&1
 echo ""
 
 # ==========================================
@@ -223,6 +207,19 @@ nvm use --lts
 nvm alias default 'lts/*'
 echo ""
 
-echo "=========================================="
-echo "🎉 SETUP COMPLETE! Restart your computer to apply Zsh, NVM, Docker, and extensions."
-echo "=========================================="
+echo -e "${PURPLE}=======================================================${NC}"
+echo -e "${GREEN}   🎉 SETUP COMPLETE! Please restart your computer.${NC}"
+echo -e "${PURPLE}=======================================================${NC}"
+echo ""
+echo -e "${GREEN}  📝 MANUAL STEPS AFTER RESTART:${NC}"
+echo ""
+echo -e "  🎨 VS Code Theme:"
+echo -e "     1. Open VS Code"
+echo -e "     2. Press Ctrl+Shift+P → 'Preferences: Color Theme'"
+echo -e "     3. Select ${PURPLE}Dracula${NC}"
+echo ""
+echo -e "  🗂️  VS Code Icons:"
+echo -e "     1. Press Ctrl+Shift+P → 'Preferences: File Icon Theme'"
+echo -e "     2. Select ${PURPLE}Material Icon Theme${NC}"
+echo ""
+echo -e "${PURPLE}=======================================================${NC}"
