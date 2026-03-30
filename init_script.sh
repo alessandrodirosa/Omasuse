@@ -1,50 +1,65 @@
 #!/bin/bash
 
 # ==========================================
-# 1. AGGIORNAMENTO SISTEMA
+# 0. WELCOME BANNER
 # ==========================================
-echo "🔄 Avvio aggiornamento sistema..."
+GREEN='\033[1;32m'
+PURPLE='\033[1;35m'
+NC='\033[0m'
+
+clear
+echo -e "${PURPLE}=======================================================${NC}"
+echo -e "${GREEN}           🦇 TUMBLEWEED DRACULA SETUP 🦇${NC}"
+echo -e "${PURPLE}=======================================================${NC}"
+echo ""
+sleep 2
+
+# ==========================================
+# 1. SYSTEM UPDATE
+# ==========================================
+echo "🔄 Starting system update..."
 sudo zypper dup -y
+echo ""
 
 # ==========================================
-# 2. INSTALLAZIONE PACCHETTI BASE (incluso GitHub CLI)
+# 2. BASE PACKAGES INSTALLATION
 # ==========================================
-echo "📦 Installazione pacchetti da repository ufficiale..."
-sudo zypper in -y flatpak zsh fastfetch htop opi curl jq git unzip dconf gh
+echo "📦 Installing packages from official repositories..."
+sudo zypper in -y flatpak zsh fastfetch htop opi curl jq git unzip dconf gh gutenprint
+echo ""
 
 # ==========================================
-# 3. CONFIGURAZIONE FLATPAK E APP
+# 3. FLATPAK & APPS CONFIGURATION
 # ==========================================
-echo "🛍️ Configurazione Flathub e installazione applicazioni..."
+echo "🛍️ Configuring Flathub and installing applications..."
 flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 flatpak install -y flathub \
     com.github.tchx84.Flatseal \
     io.github.flattool.Warehouse \
-    org.onlyoffice.desktopeditors \
     it.mijorus.gearlever \
     com.google.Chrome \
     com.mattjakeman.ExtensionManager
+echo ""
 
 # ==========================================
-# 4. SCELTA E INSTALLAZIONE EDITOR (VS CODE / ZED)
+# 4. EDITOR SELECTION & INSTALLATION
 # ==========================================
-echo ""
-echo "🧑‍💻 QUALE EDITOR VUOI INSTALLARE?"
-echo "  1) Visual Studio Code (Configurato stile IntelliJ)"
-echo "  2) Zed (L'editor iper-veloce in Rust)"
-echo "  3) Entrambi"
-read -p "Scelta (1/2/3): " EDITOR_CHOICE
+echo "🧑‍💻 WHICH EDITOR DO YOU WANT TO INSTALL?"
+echo "  1) Visual Studio Code (IntelliJ style configuration)"
+echo "  2) Zed (The hyper-fast Rust editor)"
+echo "  3) Both"
+read -p "Choice (1/2/3): " EDITOR_CHOICE
 echo ""
 
 if [[ "$EDITOR_CHOICE" == "1" || "$EDITOR_CHOICE" == "3" ]]; then
-    echo "🧑‍💻 Aggiunta repository e installazione di Visual Studio Code..."
+    echo "🧑‍💻 Adding repository and installing Visual Studio Code..."
     sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
     sudo zypper addrepo -f https://packages.microsoft.com/yumrepos/vscode vscode
     sudo zypper refresh
     sudo zypper in -y code
 
-    echo "⚙️ Preparazione delle impostazioni di VS Code IN ANTICIPO..."
+    echo "⚙️ Preparing VS Code settings IN ADVANCE..."
     killall code > /dev/null 2>&1
     mkdir -p ~/.config/Code/User
     cat <<EOF > ~/.config/Code/User/settings.json
@@ -60,7 +75,7 @@ if [[ "$EDITOR_CHOICE" == "1" || "$EDITOR_CHOICE" == "3" ]]; then
 }
 EOF
 
-    echo "🧩 Installazione estensioni di VS Code..."
+    echo "🧩 Installing VS Code extensions..."
     VSCODE_EXTS=(
         "dracula-theme.theme-dracula"
         "PKief.material-icon-theme"
@@ -80,17 +95,18 @@ EOF
         "arturock.gitstash"
     )
     for ext in "${VSCODE_EXTS[@]}"; do
-        echo "   -> Installo estensione: $ext"
+        echo "   -> Installing extension: $ext"
         code --install-extension "$ext" --force
     done
     killall code > /dev/null 2>&1
+    echo ""
 fi
 
 if [[ "$EDITOR_CHOICE" == "2" || "$EDITOR_CHOICE" == "3" ]]; then
-    echo "⚡ Installazione di Zed (Versione Stabile)..."
+    echo "⚡ Installing Zed (Stable Version)..."
     curl -f https://zed.dev/install.sh | sh
 
-    echo "⚙️ Configurazione telemetria e font per Zed..."
+    echo "⚙️ Configuring telemetry and fonts for Zed..."
     mkdir -p ~/.config/zed
     cat <<EOF > ~/.config/zed/settings.json
 {
@@ -101,27 +117,30 @@ if [[ "$EDITOR_CHOICE" == "2" || "$EDITOR_CHOICE" == "3" ]]; then
   "buffer_font_size": 15
 }
 EOF
+    echo ""
 fi
 
 # ==========================================
-# 5. INSTALLAZIONE DOCKER E DOCKER COMPOSE
+# 5. DOCKER & DOCKER COMPOSE INSTALLATION
 # ==========================================
-echo "🐳 Installazione di Docker seguendo la guida per openSUSE..."
+echo "🐳 Installing Docker following the openSUSE guide..."
 sudo zypper in -y docker docker-compose
 sudo systemctl enable --now docker
 sudo usermod -aG docker $USER
+echo ""
 
 # ==========================================
-# 6. CODECS E TWEAKS DI GNOME
+# 6. MULTIMEDIA CODECS & GNOME TWEAKS
 # ==========================================
-echo "🎵 Installazione Codecs multimediali..."
-opi codecs # (Premi Y se richiesto)
+echo "🎵 Installing multimedia codecs (Press 'Y' if prompted by opi)..."
+opi codecs
 gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
+echo ""
 
 # ==========================================
-# 7. DOWNLOAD E SETUP TEMA DRACULA (GTK3 & GTK4)
+# 7. DRACULA THEME DOWNLOAD & SETUP (GTK3 & GTK4)
 # ==========================================
-echo "🧛‍♂️ Installazione Tema GTK e Icone Dracula..."
+echo "🧛‍♂️ Installing Dracula GTK Theme and Icons..."
 mkdir -p ~/.themes ~/.icons ~/.config/gtk-4.0
 
 curl -sL https://github.com/dracula/gtk/archive/master.zip -o /tmp/dracula-theme.zip
@@ -147,11 +166,12 @@ ln -sf ~/.themes/Dracula/gtk-4.0/assets ~/.config/gtk-4.0/assets
 ln -sf ~/.themes/Dracula/assets ~/.config/assets
 
 rm /tmp/dracula-theme.zip /tmp/dracula-icons.zip
+echo ""
 
 # ==========================================
-# 8. DOWNLOAD E SETUP ESTENSIONI GNOME
+# 8. GNOME EXTENSIONS DOWNLOAD & SETUP
 # ==========================================
-echo "🧩 Inizio configurazione estensioni GNOME..."
+echo "🧩 Starting GNOME extensions configuration..."
 gsettings set org.gnome.shell disable-user-extensions false
 
 GNOME_VERSION=$(gnome-shell --version | awk '{print $3}' | cut -d. -f1)
@@ -183,11 +203,12 @@ if [ -n "$EXT_LIST" ]; then
     gsettings set org.gnome.shell enabled-extensions "[$EXT_LIST]"
     dconf write /org/gnome/shell/extensions/user-theme/name "'Dracula'"
 fi
+echo ""
 
 # ==========================================
-# 9. SETUP OH MY ZSH E PLUGIN
+# 9. OH MY ZSH & PLUGINS SETUP
 # ==========================================
-echo "🐚 Installazione e configurazione di Oh My Zsh..."
+echo "🐚 Installing and configuring Oh My Zsh..."
 rm -rf ~/.oh-my-zsh
 export RUNZSH=no
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -205,28 +226,31 @@ echo "alias d='docker'" >> ~/.zshrc
 echo "alias dc='docker-compose'" >> ~/.zshrc
 
 sudo usermod -s $(which zsh) $USER
+echo ""
 
 # ==========================================
-# 10. INSTALLAZIONE NVM E NODE.JS LTS
+# 10. NVM & NODE.JS LTS INSTALLATION
 # ==========================================
-echo "🟢 Installazione di NVM e Node.js (Ultima LTS)..."
+echo "🟢 Installing NVM and Node.js (Latest LTS)..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 
-# Aggiungo la configurazione standard di NVM in fondo al .zshrc
+# Append NVM standard configuration to the end of .zshrc
 cat << 'EOF' >> ~/.zshrc
 
-# Configurazione NVM
+# NVM Configuration
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 EOF
 
-# Carico NVM nell'ambiente corrente per poter installare Node ora
+# Load NVM in the current environment to install Node right now
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 nvm install --lts
 nvm use --lts
 nvm alias default 'lts/*'
+echo ""
 
 echo "=========================================="
-echo "🎉 SETUP COMPLETATO! Riavvia il computer per applicare Zsh, NVM, Docker e le estensioni."
+echo "🎉 SETUP COMPLETE! Restart your computer to apply Zsh, NVM, Docker, and extensions."
+echo "=========================================="
